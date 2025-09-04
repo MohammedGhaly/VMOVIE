@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { supabase } from '../services/supabase'
+import router from '../router'
+
+const redirectUrl = import.meta.env.VITE_REDIRECT_URL
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -16,10 +19,7 @@ export const useAuthStore = defineStore('auth', {
       supabase.auth.onAuthStateChange((_event, session) => {
         this.session = session
         this.user = session?.user ?? null
-        console.log('Auth state changed:', {
-          user: this.user,
-          session: this.session,
-        })
+        if (session?.user) router.push('/')
       })
     },
 
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: import.meta.env.VITE_SITE_URL,
+          redirectTo: redirectUrl,
         },
       })
     },
@@ -35,6 +35,7 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       await supabase.auth.signOut()
       this.user = null
+      router.push('/login')
     },
   },
 })
