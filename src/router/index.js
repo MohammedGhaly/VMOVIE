@@ -5,6 +5,7 @@ import NotFoundView from '../views/NotFoundView.vue'
 import { useAuthStore } from '../stores/auth'
 import LoginView from '../views/LoginView.vue'
 import MyProfile from '../views/MyProfile.vue'
+import AuthCallback from '../components/AuthCallback.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +15,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/auth/callback',
+      name: 'auth-callback',
+      component: AuthCallback,
     },
     {
       path: '/me',
