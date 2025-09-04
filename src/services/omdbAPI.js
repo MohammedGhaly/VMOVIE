@@ -1,0 +1,16 @@
+export const API_KEY = import.meta.env.VITE_OMDB_API_KEY
+
+async function fetchMovies(query, controller) {
+  const res = await fetch(
+    `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+    { signal: controller.signal },
+  )
+  if (!res.ok) {
+    throw new Error('something went wrong while fetching the data')
+  }
+  const data = await res.json()
+  if (data.Response === 'False') throw new Error("couldn't find any results")
+  console.log(data)
+  return data.Search
+}
+export { fetchMovies }
