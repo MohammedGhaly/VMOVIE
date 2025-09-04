@@ -1,20 +1,40 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import { supabase } from '../services/supabase'
 
-export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    user: null,
+    session: null,
+  }),
+  actions: {
+    async initAuth() {
+      const { data } = await supabase.auth.getSession()
+      this.session = data.session
+      this.user = data.session?.user ?? null
 
-  // Load current session
-  async function loadUser() {
-    const { data } = await supabase.auth.getUser()
-    user.value = data?.user ?? null
-  }
+      // listen for changes
+      supabase.auth.onAuthStateChange((_event, session) => {
+        this.session = session
+        this.user = session?.user ?? null
+        console.log('Auth state changed:', {
+          user: this.user,
+          session: this.session,
+        })
+      })
+    },
 
-  // Listen for auth changes
-  supabase.auth.onAuthStateChange((_event, session) => {
-    user.value = session?.user ?? null
-  })
+    async loginWithGoogle() {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: import.meta.env.VITE_SITE_URL,
+        },
+      })
+    },
 
-  return { user, loadUser }
+    async logout() {
+      await supabase.auth.signOut()
+      this.user = null
+    },
+  },
 })

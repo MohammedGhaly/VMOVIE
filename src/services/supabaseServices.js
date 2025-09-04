@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+const SITE_URL = import.meta.env.VITE_SITE_URL
 
 export async function searchMoviesByTitle(searchText) {
   const { data, error } = await supabase
@@ -221,6 +222,9 @@ export async function signOut() {
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
+    options: {
+      redirectTo: SITE_URL,
+    },
   })
   if (error) throw error
   return data
