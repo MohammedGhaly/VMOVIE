@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', {
         this.session = session
         this.user = session?.user ?? null
         if (session?.user) router.push('/')
+        console.log(session.user)
       })
     },
 
