@@ -12,6 +12,7 @@
     const { error } = await signIn(email.value, password.value)
     if (error) {
       errorMessage.value = error.message
+      console.log(error)
     } else {
       errorMessage.value = ''
       router.push('/')
@@ -47,7 +48,6 @@
         <button
           role="submit"
           class="bg-indigo-800 p-2 mt-4 font-semibold rounded-lg text-lg xl:w-4/5 xl:mx-auto"
-          @click="handleLogin"
         >
           Login
         </button>
