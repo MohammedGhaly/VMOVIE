@@ -2,33 +2,18 @@
 <script setup>
   import { onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import { supabase } from '../services/supabase'
+  import { useAuthStore } from '../stores/auth'
 
   const router = useRouter()
+  const auth = useAuthStore()
 
   onMounted(async () => {
     try {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession()
-
-      if (error) {
-        console.error('Error in callback:', error)
-        router.push('/login?error=auth_failed')
-        return
-      }
-
-      if (session) {
-        // Successful login
-        router.push('/')
-      } else {
-        // No session found
-        router.push('/login?error=no_session')
-      }
+      // Let the auth store handle the callback
+      await auth.handleOAuthCallback()
     } catch (error) {
-      console.error('Unexpected error in callback:', error)
-      router.push('/login?error=unexpected')
+      console.error('Callback error:', error)
+      router.push('/login?error=callback_failed')
     }
   })
 </script>

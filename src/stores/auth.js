@@ -12,6 +12,11 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async initAuth() {
+      if (window.location.pathname === '/auth/callback') {
+        await this.handleOAuthCallback()
+        return
+      }
+
       const { data } = await supabase.auth.getSession()
       this.session = data.session
       this.user = data.session?.user ?? null
@@ -23,6 +28,29 @@ export const useAuthStore = defineStore('auth', {
         if (session?.user) router.push('/')
         console.log(session.user)
       })
+    },
+
+    async handleOAuthCallback() {
+      try {
+        const { data, error } = await supabase.auth.getSession({
+          storeSession: true,
+        })
+
+        if (error) {
+          console.error('OAuth callback error:', error)
+          router.push('/login?error=oauth_failed')
+          return
+        }
+
+        if (data.session) {
+          this.session = data.session
+          this.user = data.session.user
+          router.push('/')
+        }
+      } catch (error) {
+        console.error('Unexpected error in OAuth callback:', error)
+        router.push('/login?error=unexpected')
+      }
     },
 
     async loginWithGoogle() {
