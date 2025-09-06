@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <div class="italic font-extrabold text-3xl">VMOVIE</div>
+  <img src="/whiteLogo.png" alt="VMOVIE Logo" class="w-14 h-14" />
 </template>

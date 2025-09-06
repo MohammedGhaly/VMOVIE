@@ -3,12 +3,16 @@
   import { signIn } from '../services/supabaseServices'
   import router from '../router'
   import GoogleLoginButton from '../components/GoogleLoginButton.vue'
+  import { RouterLink } from 'vue-router'
+  import AuthSubmitButton from '../components/AuthSubmitButton.vue'
 
   const email = ref('')
   const password = ref('')
   const errorMessage = ref('')
+  const isLoading = ref(false)
 
   async function handleLogin() {
+    isLoading.value = true
     const { error } = await signIn(email.value, password.value)
     if (error) {
       errorMessage.value = error.message
@@ -45,14 +49,12 @@
           placeholder="Password"
           class="bg-neutral-700 p-2 px-3 text-lg rounded-lg"
         />
-        <button
-          role="submit"
-          class="bg-indigo-800 p-2 mt-4 font-semibold rounded-lg text-lg xl:w-4/5 xl:mx-auto"
-        >
-          Login
-        </button>
+        <AuthSubmitButton :is-loading="isLoading" text="Login" />
         <GoogleLoginButton />
         <p v-if="errorMessage">{{ errorMessage }}</p>
+        <RouterLink to="/signup" class="underline text-sm text-center">
+          Don't have an account? Register
+        </RouterLink>
       </form>
     </div>
   </div>

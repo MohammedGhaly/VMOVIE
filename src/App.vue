@@ -1,7 +1,7 @@
 <script setup>
+  import { RouterView } from 'vue-router'
   import { useAuthStore } from './stores/auth'
   import LoggedApp from './views/LoggedApp.vue'
-  import LoginView from './views/LoginView.vue'
 
   const auth = useAuthStore()
   auth.initAuth()
@@ -9,5 +9,5 @@
 
 <template>
   <LoggedApp v-if="auth.user" />
-  <LoginView v-else />
+  <RouterView v-else />
 </template>

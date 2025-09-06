@@ -6,6 +6,7 @@ import { useAuthStore } from '../stores/auth'
 import LoginView from '../views/LoginView.vue'
 import MyProfile from '../views/MyProfile.vue'
 import AuthCallback from '../components/AuthCallback.vue'
+import SignupView from '../views/SignupView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +16,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignupView,
     },
     {
       path: '/auth/callback',

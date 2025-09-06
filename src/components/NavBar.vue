@@ -1,19 +1,12 @@
 <script setup>
   import { Home, Search, User, X } from 'lucide-vue-next'
   import Logo from './Logo.vue'
-  import { ref } from 'vue'
+  import { inject, ref } from 'vue'
   import router from '../router'
+  import { useAuthStore } from '../stores/auth'
 
-  const searchText = defineModel({ type: String, required: true })
-
-  const props = defineProps({
-    isSearching: Boolean,
-    setIsSearching: {
-      type: Function,
-      required: true,
-    },
-  })
-
+  const auth = useAuthStore()
+  const { state, setIsSearching, setProfiles } = inject('searchStore')
   const searchInputRef = ref(null)
 </script>
 
@@ -22,35 +15,46 @@
     class="flex bg-indigo-800 rounded-2xl px-4 justify-between items-center min-h-18 xl:mx-32"
   >
     <div
-      v-if="!props.isSearching"
+      v-if="!state.isSearching"
       class="flex gap-4 w-full justify-between p-2"
     >
       <Logo />
       <div class="flex justify-between gap-4 xl:gap-8">
-        <button id="search-btn" class="" @click="props.setIsSearching(true)">
+        <button id="search-btn" class="" @click="setIsSearching(true)">
           <Search />
         </button>
         <button class="" @click="router.push('/')">
           <Home />
         </button>
         <button class="" @click="router.push('/me')">
-          <User />
+          <User v-if="!auth.user.user_metadata.avatar_url" />
+          <div v-else class="w-8 h-8 rounded-full overflow-hidden">
+            <img :src="auth.user.user_metadata.avatar_url" alt="user avatar" />
+          </div>
         </button>
       </div>
     </div>
     <div
       v-else
-      class="w-full h-full flex gap-1 bg-gray-800 rounded-lg overflow-hidden pr-3"
+      class="w-full h-full flex gap-1 bg-neutral-900 rounded-lg overflow-hidden pr-3"
     >
       <input
         ref="searchInputRef"
-        v-model="searchText"
+        v-model="state.searchText"
         name="search"
         type="text"
-        class="px-4 py-3 outline-none bg-gray-800 w-full h-full text-lg flex-1"
+        class="px-4 py-3 outline-none bg-neutral-900 w-full h-full text-lg flex-1"
         placeholder="Search ..."
       />
-      <button @click="props.setIsSearching(false)">
+      <button
+        @click="
+          () => {
+            setIsSearching(false)
+            state.searchText = ''
+            setProfiles([])
+          }
+        "
+      >
         <X />
       </button>
     </div>

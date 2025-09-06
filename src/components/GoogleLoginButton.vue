@@ -10,7 +10,6 @@
   const handleSignInWithGoogle = async () => {
     isLoading.value = true
     await auth.loginWithGoogle()
-    isLoading.value = false
   }
 </script>
 
@@ -26,6 +25,6 @@
       class="mr-2 h-7 w-7"
     />
     <SyncLoader v-else color="#121212" size="10px" />
-    Sign in with Google
+    continue with Google
   </button>
 </template>

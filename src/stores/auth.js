@@ -3,7 +3,6 @@ import { supabase } from '../services/supabase'
 import router from '../router'
 
 const redirectUrl = import.meta.env.VITE_REDIRECT_URL
-console.log(redirectUrl)
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -26,7 +25,6 @@ export const useAuthStore = defineStore('auth', {
         this.session = session
         this.user = session?.user ?? null
         if (session?.user) router.push('/')
-        console.log(session.user)
       })
     },
 

@@ -1,15 +1,56 @@
+import { omdbFetchMovieById } from './omdbAPI'
 import { supabase } from './supabase'
+
 const SITE_URL = import.meta.env.VITE_SITE_URL
 
-export async function searchMoviesByTitle(searchText) {
+export async function searchMoviesByTitle(searchText, controller) {
   const { data, error } = await supabase
     .from('movies')
     .select('*')
     .ilike('title', `%${searchText}%`) // case-insensitive search
     .limit(20)
+    .abortSignal(controller.signal)
 
   if (error) {
     throw new Error('Error searching movies: ' + error.message)
+  }
+  return data
+}
+
+export async function getFeed(userId) {
+  const { data, error } = await supabase
+    .from('user_movies')
+    .select(
+      `
+    id,
+    rating,
+    review,
+    watched_at,
+    movies (
+      id,
+      title,
+      poster_url
+    ),
+    profiles (
+      id,
+      username,
+      avatar_url
+    )
+  `,
+    )
+    .in(
+      'user_id',
+      (
+        await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', userId)
+      ).data.map((f) => f.following_id),
+    )
+    .order('watched_at', { ascending: false })
+
+  if (error) {
+    throw new Error('Error loading feed: ' + error.message)
   }
   return data
 }
@@ -46,23 +87,72 @@ export async function getUserMovies(userId) {
   return data
 }
 
-export async function reviewMovie(userId, movieId, rating, review) {
+export async function findOrCreateMovie(imdbId) {
+  // 1. Look in Supabase
+  console.log('inside findOrCreate')
+  let { data: movies } = await supabase
+    .from('movies')
+    .select('*')
+    .eq('imdbid', imdbId)
+  // .single()
+
+  if (movies.length) {
+    return movies[0]
+  }
+
+  console.log('inside findOrCreate2')
+  const omdbData = await omdbFetchMovieById(imdbId)
+  if (!omdbData || omdbData.Response === 'False')
+    throw new Error('Movie not found in OMDB')
+  // 3. Insert into Supabase
+  const { data: newMovie, error: insertError } = await supabase
+    .from('movies')
+    .insert({
+      imdbid: omdbData.imdbID,
+      country: omdbData.Country,
+      title: omdbData.Title,
+      year: omdbData.Year,
+      imdbrating: omdbData.imdbRating,
+      rottentomatoesrating: omdbData.Ratings[1].Value,
+      metacriticrating: omdbData.Ratings[2]?.Value || omdbData.Metascore,
+      plot: omdbData.Plot,
+      posterurl: omdbData.Poster,
+    })
+    .select()
+    .single()
+
+  if (insertError) {
+    console.log(insertError.message)
+
+    throw insertError
+  }
+
+  return newMovie
+}
+
+export async function reviewMovie(userId, movieId, personalrating, review) {
   const { data, error } = await supabase
     .from('user_movies')
-    .insert([
+    .upsert(
       {
         user_id: userId,
-        movie_id: movieId, // from findOrCreateMovie()
-        rating,
+        movie_id: movieId,
+        personalrating,
         review,
       },
-    ])
+      { onConflict: 'user_id,movie_id' },
+    )
     .select()
 
   if (error) {
     throw new Error('Error reviewing movie: ' + error.message)
   }
   return data
+}
+
+export async function fetchAndReviewMovie(imdbId, userId, rating) {
+  const newMovie = await findOrCreateMovie(imdbId)
+  await reviewMovie(userId, newMovie.id, rating, '')
 }
 
 export async function updateReview(userId, movieId, rating, review) {
@@ -79,6 +169,38 @@ export async function updateReview(userId, movieId, rating, review) {
   return data
 }
 
+export async function searchProfile(username, controller) {
+  if (!username || username.trim().length <= 2) return
+
+  const cleanedUsername = username.trim()
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .ilike('username', `%${cleanedUsername}%`) // case-insensitive search
+    .limit(20)
+    .abortSignal(controller.signal)
+
+  if (error) {
+    throw new Error('Error searching for this profile: ' + error.message)
+  }
+  return data
+}
+
+export async function getProfile(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, username, avatar_url, bio')
+    .eq('id', userId)
+    .single()
+
+  if (error) {
+    throw new Error('Error fetching profile: ' + error.message)
+  }
+  return data
+}
+
+// follow & unfollow//
 export async function getFollowers(userId) {
   const { data, error } = await supabase
     .from('follows')
@@ -142,64 +264,11 @@ export async function unfollowUser(userId, targetUserId) {
   return data
 }
 
-export async function getFeed(userId) {
-  const { data, error } = await supabase
-    .from('user_movies')
-    .select(
-      `
-    id,
-    rating,
-    review,
-    watched_at,
-    movies (
-      id,
-      title,
-      poster_url
-    ),
-    profiles (
-      id,
-      username,
-      avatar_url
-    )
-  `,
-    )
-    .in(
-      'user_id',
-      (
-        await supabase
-          .from('follows')
-          .select('following_id')
-          .eq('follower_id', userId)
-      ).data.map((f) => f.following_id),
-    )
-    .order('watched_at', { ascending: false })
-
-  if (error) {
-    throw new Error('Error loading feed: ' + error.message)
-  }
-  return data
-}
-
-export async function getProfile(userId) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, username, avatar_url, bio')
-    .eq('id', userId)
-    .single()
-
-  if (error) {
-    throw new Error('Error fetching profile: ' + error.message)
-  }
-  return data
-}
-
-export async function signUp(email, password, username) {
+// auth //
+export async function signUp(email, password) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { username }, // this goes into user metadata
-    },
   })
   if (error) throw error
   return data

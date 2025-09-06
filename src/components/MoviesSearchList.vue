@@ -1,20 +1,16 @@
 <script setup>
-  import { ref, watch } from 'vue'
-  // import movies from '../data/movies.json'
+  import { inject, ref, watch } from 'vue'
   import SearchedMovie from './SearchedMovie.vue'
-  import { fetchMovies } from '../services/omdbAPI'
-
-  const props = defineProps({
-    searchText: { type: String, default: '' },
-  })
+  import { omdbFetchMoviesByName } from '../services/omdbAPI'
 
   const moviesList = ref([])
   const isLoading = ref(false)
   const error = ref('')
+  const { state } = inject('searchStore')
   console.log(moviesList.value)
 
   watch(
-    () => props.searchText,
+    () => state.searchText,
     async (newVal, _oldVal, onCleanup) => {
       const controller = new AbortController()
       try {
@@ -22,7 +18,7 @@
         if (newVal.length > 1) {
           isLoading.value = true
           const timeoutId = setTimeout(() => {
-            fetchMovies(newVal, controller)
+            omdbFetchMoviesByName(newVal, controller)
               .then((res) => {
                 moviesList.value = res
               })
@@ -56,10 +52,10 @@
   <p v-if="error" class="text-4xl w-full text-center font-semibold">
     {{ error }} 🚫
   </p>
-  <div class="movies-list flex flex-col gap-2 xl:mx-32">
+  <div class="movies-list flex flex-col gap-2 xl:mx-32 xl:grid xl:grid-cols-2">
     <SearchedMovie
       v-for="movie in moviesList"
-      :key="movie.imdb_id"
+      :key="movie.imdbID"
       :movie="movie"
     />
   </div>

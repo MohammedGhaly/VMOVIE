@@ -1,25 +1,18 @@
 <script setup>
+  import { provide } from 'vue'
   import { RouterView } from 'vue-router'
-  import { ref } from 'vue'
   import NavBar from '../components/NavBar.vue'
   import SearchList from '../components/SearchList.vue'
+  import { createSearchStore } from '../stores/store'
 
-  const isSearching = ref(false)
-
-  const setIsSearching = (value) => {
-    isSearching.value = value
-  }
-  const searchText = ref('')
+  const store = createSearchStore()
+  provide('searchStore', store)
 </script>
 
 <template>
-  <div class="m-8 space-y-6">
-    <NavBar
-      v-model="searchText"
-      :is-searching="isSearching"
-      :set-is-searching="setIsSearching"
-    />
-    <SearchList v-if="isSearching" :search-text="searchText" />
+  <div class="m-8 space-y-3">
+    <NavBar />
+    <SearchList v-if="store.state.isSearching" />
     <RouterView v-else />
   </div>
 </template>
