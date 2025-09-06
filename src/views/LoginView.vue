@@ -16,7 +16,6 @@
     const { error } = await signIn(email.value, password.value)
     if (error) {
       errorMessage.value = error.message
-      console.log(error)
     } else {
       errorMessage.value = ''
       router.push('/')

@@ -19,7 +19,6 @@
           const timeoutId = setTimeout(() => {
             searchProfile(newVal, controller)
               .then((res) => {
-                console.log(res)
                 setProfiles(res)
               })
               .finally(() => {

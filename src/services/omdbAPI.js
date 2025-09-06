@@ -10,7 +10,6 @@ async function omdbFetchMoviesByName(query, controller) {
   }
   const data = await res.json()
   if (data.Response === 'False') throw new Error("couldn't find any results")
-  console.log(data)
   return data.Search
 }
 

@@ -89,7 +89,6 @@ export async function getUserMovies(userId) {
 
 export async function findOrCreateMovie(imdbId) {
   // 1. Look in Supabase
-  console.log('inside findOrCreate')
   let { data: movies } = await supabase
     .from('movies')
     .select('*')
@@ -100,7 +99,6 @@ export async function findOrCreateMovie(imdbId) {
     return movies[0]
   }
 
-  console.log('inside findOrCreate2')
   const omdbData = await omdbFetchMovieById(imdbId)
   if (!omdbData || omdbData.Response === 'False')
     throw new Error('Movie not found in OMDB')
@@ -122,8 +120,6 @@ export async function findOrCreateMovie(imdbId) {
     .single()
 
   if (insertError) {
-    console.log(insertError.message)
-
     throw insertError
   }
 

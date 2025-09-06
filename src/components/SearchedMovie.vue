@@ -7,7 +7,6 @@
     movie: { type: Object, required: true },
   })
   const beingRated = ref(false)
-  console.log('from searched movie=> ', props.movie.imdbID)
 </script>
 
 <template>

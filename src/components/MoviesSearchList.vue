@@ -7,7 +7,6 @@
   const isLoading = ref(false)
   const error = ref('')
   const { state } = inject('searchStore')
-  console.log(moviesList.value)
 
   watch(
     () => state.searchText,

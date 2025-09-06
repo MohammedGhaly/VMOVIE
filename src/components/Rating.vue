@@ -11,8 +11,6 @@
     },
   })
 
-  console.log('from Rating=> ', props.imdbId)
-
   const auth = useAuthStore()
   const rate = ref(0)
   const hoverRate = ref(0)
