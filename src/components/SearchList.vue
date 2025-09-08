@@ -8,7 +8,7 @@
 <template>
   <!-- search mode toggle -->
   <div
-    class="flex w-full gap-3 bg-neutral-900 p-2 rounded-lg xl:w-3/5 xl:mx-auto *:w-full *:rounded-lg font-semibold text-xl *:py-2 *:transition-all *:duration-200 *:hover:brightness-105"
+    class="flex m-8 w-full gap-3 bg-neutral-900 p-2 rounded-lg xl:w-3/5 xl:mx-auto *:w-full *:rounded-lg font-semibold text-xl *:py-2 *:transition-all *:duration-200 *:hover:brightness-105"
   >
     <button
       :class="{

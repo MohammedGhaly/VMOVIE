@@ -1,3 +1,4 @@
+import mapMovieObject from '../utils/mapMovieObject'
 import { omdbFetchMovieById } from './omdbAPI'
 import { supabase } from './supabase'
 
@@ -55,13 +56,18 @@ export async function getFeed(userId) {
   return data
 }
 
-export async function getUserMovies(userId) {
+export async function getUserMovies(
+  userId,
+  order = 'watched_at',
+  asc = true,
+  limit = 10,
+) {
   const { data, error } = await supabase
     .from('user_movies')
     .select(
       `
     id,
-    rating,
+    personalrating,
     review,
     watched_at,
     movies (
@@ -74,16 +80,42 @@ export async function getUserMovies(userId) {
       country,
       metacriticrating,
       plot,
-      posterurl,
+      posterurl
     )
   `,
     )
     .eq('user_id', userId)
-    .order('watched_at', { ascending: false })
+    .order(order, { ascending: asc })
+    .limit(limit)
 
   if (error) {
     throw new Error('Error fetching movie: ' + error.message)
   }
+  return data
+}
+
+export async function getUserOverratedMovies(userId, limit) {
+  const { data, error } = await supabase.rpc('get_user_movies_diff_asc', {
+    p_user_id: userId,
+    p_limit: limit,
+  })
+
+  if (error) {
+    throw new Error('Error getting user underrated movies ' + error.message)
+  }
+  console.log(data)
+  return data
+}
+export async function getUserUnderratedMovies(userId, limit) {
+  const { data, error } = await supabase.rpc('get_user_movies_diff_desc', {
+    p_user_id: userId,
+    p_limit: limit,
+  })
+
+  if (error) {
+    throw new Error('Error getting user underrated movies ' + error.message)
+  }
+  console.log(data)
   return data
 }
 
@@ -93,6 +125,7 @@ export async function findOrCreateMovie(imdbId) {
     .from('movies')
     .select('*')
     .eq('imdbid', imdbId)
+
   // .single()
 
   if (movies.length) {
@@ -100,22 +133,13 @@ export async function findOrCreateMovie(imdbId) {
   }
 
   const omdbData = await omdbFetchMovieById(imdbId)
+  console.log(omdbData)
   if (!omdbData || omdbData.Response === 'False')
     throw new Error('Movie not found in OMDB')
   // 3. Insert into Supabase
   const { data: newMovie, error: insertError } = await supabase
     .from('movies')
-    .insert({
-      imdbid: omdbData.imdbID,
-      country: omdbData.Country,
-      title: omdbData.Title,
-      year: omdbData.Year,
-      imdbrating: omdbData.imdbRating,
-      rottentomatoesrating: omdbData.Ratings[1].Value,
-      metacriticrating: omdbData.Ratings[2]?.Value || omdbData.Metascore,
-      plot: omdbData.Plot,
-      posterurl: omdbData.Poster,
-    })
+    .insert(mapMovieObject(omdbData))
     .select()
     .single()
 
@@ -186,7 +210,9 @@ export async function searchProfile(username, controller) {
 export async function getProfile(userId) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio')
+    .select(
+      'id, username, avatar_url, bio, full_name, followersCount, followingCount, moviesCount',
+    )
     .eq('id', userId)
     .single()
 
@@ -215,6 +241,7 @@ export async function getFollowers(userId) {
   }
   return data
 }
+
 export async function getFollowing(userId) {
   const { data, error } = await supabase
     .from('follows')
@@ -233,6 +260,21 @@ export async function getFollowing(userId) {
     throw new Error('Error fetching following: ' + error.message)
   }
   return data
+}
+
+export async function isFollowing(userId, targetUserId) {
+  const { data, error } = await supabase
+    .from('follows')
+    .select('id')
+    .eq('follower_id', userId)
+    .eq('following_id', targetUserId)
+    .maybeSingle() // returns null instead of throwing if no row found
+
+  if (error) {
+    throw new Error('Error checking follow status: ' + error.message)
+  }
+
+  return !!data // true if row exists, false otherwise
 }
 
 export async function followUser(userId, targetUserId) {

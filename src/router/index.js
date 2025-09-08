@@ -7,6 +7,7 @@ import LoginView from '../views/LoginView.vue'
 import MyProfile from '../views/MyProfile.vue'
 import AuthCallback from '../components/AuthCallback.vue'
 import SignupView from '../views/SignupView.vue'
+import UserAllMoviesView from '../views/UserAllMoviesView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,13 +35,19 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/allMovies/:id',
+      name: 'allMovies',
+      component: UserAllMoviesView,
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/profile/:id',
       name: 'profile',
       component: ProfileView,
       meta: { requiresAuth: true },
     },
     {
-      path: '/movie',
+      path: '/movie/:imdbid',
       name: 'movie',
       component: 'MovieView',
       meta: { requiresAuth: true },

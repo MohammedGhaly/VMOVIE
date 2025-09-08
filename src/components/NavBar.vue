@@ -12,7 +12,7 @@
 
 <template>
   <div
-    class="flex bg-indigo-800 rounded-2xl px-4 justify-between items-center min-h-18 xl:mx-32"
+    class="m-8 flex bg-indigo-800 rounded-2xl px-4 justify-between items-center min-h-18 xl:mx-32"
   >
     <div
       v-if="!state.isSearching"
