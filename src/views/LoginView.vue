@@ -28,7 +28,7 @@
     class="w-full h-screen flex flex-col justify-center items-center space-y-6"
   >
     <div
-      class="bg-neutral-800 flex flex-col py-12 px-8 w-[88vw] mx-20 xl:w-[40vw] xl:px-12 rounded-2xl space-y-6 items-center border-2 border-indigo-800"
+      class="bg-neutral-800 flex flex-col py-12 px-8 w-[88vw] md:max-w-[60vw] mx-auto xl:w-[40vw] xl:px-12 rounded-2xl space-y-6 items-center border-2 border-indigo-800"
     >
       <img class="w-24 h-24" src="/logo.png" alt="VMOVIE Logo" />
       <form class="flex flex-col gap-y-4 w-full" @submit.prevent="handleLogin">

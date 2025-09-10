@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
   server: {
+    historyApiFallback: true,
     hmr: {
       host: 'localhost',
       port: 5173,
