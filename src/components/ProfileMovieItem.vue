@@ -1,11 +1,15 @@
 <script setup>
   import { Star } from 'lucide-vue-next'
+  import router from '../router'
 
   const props = defineProps({ movie: { type: Object, required: true } })
 </script>
 
 <template>
-  <div class="relative flex-shrink-0 min-w-[270px]">
+  <div
+    class="relative flex-shrink-0 min-w-[270px]"
+    @click="router.push(`/movie/${props.movie.imdbid}`)"
+  >
     <div class="absolute top-1 left-1 z-10">
       <Star fill="#312c85" class="w-10 h-10" />
       <span
@@ -19,7 +23,7 @@
     >
       <div class="flex items-start gap-3">
         <img
-          :src="props.movie.posterurl || props.movie.movies.posterurl"
+          :src="props.movie.posterurl || props.movie.posterurl"
           :alt="`${props.movie.Title}`"
           class="rounded-lg h-full w-24 xl:w-34"
         />
@@ -31,7 +35,7 @@
         </p>
       </div>
       <h1 class="text-white text-xl text-center font-bold">
-        {{ props.movie.title || props.movie.movies.title }}
+        {{ props.movie.title }}
       </h1>
     </div>
   </div>

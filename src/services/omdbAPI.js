@@ -1,3 +1,5 @@
+import mapMovieObject from '../utils/mapMovieObject'
+
 export const API_KEY = import.meta.env.VITE_OMDB_API_KEY
 
 async function omdbFetchMoviesByName(query, controller) {
@@ -22,6 +24,6 @@ async function omdbFetchMovieById(imdbId) {
   if (!omdbData || omdbData.Response === 'False') {
     throw new Error('Movie not found in OMDB')
   }
-  return omdbData
+  return mapMovieObject(omdbData)
 }
 export { omdbFetchMoviesByName, omdbFetchMovieById }

@@ -6,6 +6,7 @@
   import ProfileTabs from '../components/ProfileTabs.vue'
   import ProfileMovies from '../components/ProfileMovies.vue'
   import ProfileSettings from '../components/ProfileSettings.vue'
+  import ProfileAllMovies from '../components/ProfileAllMovies.vue'
 
   const activeTab = ref('movies')
   const { profile, isLoading } = inject('profileStore')
@@ -21,6 +22,10 @@
         @set-profile-tab="(val) => (activeTab = val)"
       />
       <ProfileMovies v-if="activeTab === 'movies'" :user-id="auth.user.id" />
+      <ProfileAllMovies
+        v-else-if="activeTab === 'all'"
+        :user-id="auth.user.id"
+      />
       <ProfileSettings v-else-if="activeTab === 'settings'" />
     </div>
   </div>

@@ -14,7 +14,16 @@
       }"
       @click="$emit('setProfileTab', 'movies')"
     >
-      Movies
+      Featured
+    </button>
+    <button
+      :class="{
+        'bg-neutral-700': props.activeTab === 'all',
+        'bg-neutral-800': props.activeTab !== 'all',
+      }"
+      @click="$emit('setProfileTab', 'all')"
+    >
+      All Movies
     </button>
     <button
       :class="{

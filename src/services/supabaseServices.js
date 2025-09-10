@@ -1,23 +1,97 @@
-import mapMovieObject from '../utils/mapMovieObject'
+import { mapFeedReviewObject } from '../utils/mapFeedReviewObject'
+import mapSupabaseMovieObject from '../utils/mapSupabaseMovieObject'
 import { omdbFetchMovieById } from './omdbAPI'
 import { supabase } from './supabase'
+import { getNewReleasesFromTOMDB } from './TMDB'
 
 const SITE_URL = import.meta.env.VITE_SITE_URL
 
-export async function searchMoviesByTitle(searchText, controller) {
+// Feed //
+export async function getNewReleases() {
   const { data, error } = await supabase
-    .from('movies')
+    .from('cached_movies')
     .select('*')
-    .ilike('title', `%${searchText}%`) // case-insensitive search
-    .limit(20)
-    .abortSignal(controller.signal)
+    .eq('id', 'new_releases')
+    .single()
 
   if (error) {
-    throw new Error('Error searching movies: ' + error.message)
+    throw new Error(error.message)
   }
+
+  if (
+    data &&
+    Date.now() - new Date(data.updated_at).getTime() < 24 * 60 * 60 * 1000
+  ) {
+    console.log('fresh data')
+    return data.movies // already cached
+  }
+  console.log('old data, fetching from tmdb and omdb')
+  // const movies = await getNewReleasesFromTOMDB()
+  const movies = getNewReleasesFromTOMDB()
+  console.log('fresh data => ', movies)
+  await supabase
+    .from('cached_movies')
+    .update({
+      movies,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', 'new_releases')
+
   return data
 }
 
+export async function getFriendsRecentReviews(userId) {
+  // 1. Get the ids of profiles the user is following
+  const { data: following, error: followingError } = await supabase
+    .from('follows')
+    .select('following_id')
+    .eq('follower_id', userId)
+
+  if (followingError) throw followingError
+  if (!following || following.length === 0) return []
+
+  const followingIds = following.map((f) => f.following_id)
+
+  // 2. Get reviews from those users in the past 7 days
+  const { data, error } = await supabase
+    .from('user_movies')
+    .select(
+      `
+      id,
+      user_id,
+      personalrating,
+      review,
+      watched_at,
+      movies (
+        id,
+        imdbid,
+        title,
+        year,
+        imdbrating,
+        rottentomatoesrating,
+        metacriticrating,
+        plot,
+        posterurl
+      ),
+      profiles (
+        username,
+        avatar_url
+      )
+    `,
+    )
+    .in('user_id', followingIds)
+    .gte(
+      'watched_at',
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    )
+    .order('watched_at', { ascending: false })
+
+  if (error) throw error
+
+  return mapFeedReviewObject(data)
+}
+
+// user movies fetching //
 export async function getFeed(userId) {
   const { data, error } = await supabase
     .from('user_movies')
@@ -56,12 +130,56 @@ export async function getFeed(userId) {
   return data
 }
 
+export async function getUserMovieByImdbId(userId, imdbId) {
+  const { data: movieData } = await supabase
+    .from('movies')
+    .select('id')
+    .eq('imdbid', imdbId)
+    .single()
+
+  const { data, error } = await supabase
+    .from('user_movies')
+    .select(
+      `
+      id,
+      personalrating,
+      review,
+      watched_at,
+      movies (
+        id,
+        imdbid,
+        title,
+        year,
+        imdbrating,
+        rottentomatoesrating,
+        country,
+        metacriticrating,
+        plot,
+        posterurl
+      )
+    `,
+    )
+    .eq('user_id', userId)
+    .eq('movie_id', movieData.id)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error('Error fetching user movie: ' + error.message)
+  }
+
+  return mapSupabaseMovieObject(data)
+}
+
 export async function getUserMovies(
   userId,
   order = 'watched_at',
   asc = true,
   limit = 10,
+  page = 1,
 ) {
+  // Calculate range for pagination
+  const from = (page - 1) * limit
+  const to = from + limit - 1
   const { data, error } = await supabase
     .from('user_movies')
     .select(
@@ -87,11 +205,13 @@ export async function getUserMovies(
     .eq('user_id', userId)
     .order(order, { ascending: asc })
     .limit(limit)
+    .range(from, to)
 
   if (error) {
     throw new Error('Error fetching movie: ' + error.message)
   }
-  return data
+  const movies = data.map((m) => mapSupabaseMovieObject(m))
+  return movies
 }
 
 export async function getUserOverratedMovies(userId, limit) {
@@ -103,7 +223,6 @@ export async function getUserOverratedMovies(userId, limit) {
   if (error) {
     throw new Error('Error getting user underrated movies ' + error.message)
   }
-  console.log(data)
   return data
 }
 export async function getUserUnderratedMovies(userId, limit) {
@@ -115,10 +234,22 @@ export async function getUserUnderratedMovies(userId, limit) {
   if (error) {
     throw new Error('Error getting user underrated movies ' + error.message)
   }
-  console.log(data)
   return data
 }
+// search //
+export async function searchMoviesByTitle(searchText, controller) {
+  const { data, error } = await supabase
+    .from('movies')
+    .select('*')
+    .ilike('title', `%${searchText}%`) // case-insensitive search
+    .limit(20)
+    .abortSignal(controller.signal)
 
+  if (error) {
+    throw new Error('Error searching movies: ' + error.message)
+  }
+  return data
+}
 export async function findOrCreateMovie(imdbId) {
   // 1. Look in Supabase
   let { data: movies } = await supabase
@@ -133,13 +264,12 @@ export async function findOrCreateMovie(imdbId) {
   }
 
   const omdbData = await omdbFetchMovieById(imdbId)
-  console.log(omdbData)
   if (!omdbData || omdbData.Response === 'False')
     throw new Error('Movie not found in OMDB')
   // 3. Insert into Supabase
   const { data: newMovie, error: insertError } = await supabase
     .from('movies')
-    .insert(mapMovieObject(omdbData))
+    .insert(omdbData)
     .select()
     .single()
 
@@ -149,7 +279,39 @@ export async function findOrCreateMovie(imdbId) {
 
   return newMovie
 }
+export async function searchProfile(username, controller) {
+  if (!username || username.trim().length <= 2) return
 
+  const cleanedUsername = username.trim()
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .ilike('username', `%${cleanedUsername}%`) // case-insensitive search
+    .limit(20)
+    .abortSignal(controller.signal)
+
+  if (error) {
+    throw new Error('Error searching for this profile: ' + error.message)
+  }
+  return data
+}
+export async function getProfile(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select(
+      'id, username, avatar_url, bio, full_name, followersCount, followingCount, moviesCount',
+    )
+    .eq('id', userId)
+    .single()
+
+  if (error) {
+    throw new Error('Error fetching profile: ' + error.message)
+  }
+  return data
+}
+
+// reviews //
 export async function reviewMovie(userId, movieId, personalrating, review) {
   const { data, error } = await supabase
     .from('user_movies')
@@ -170,9 +332,9 @@ export async function reviewMovie(userId, movieId, personalrating, review) {
   return data
 }
 
-export async function fetchAndReviewMovie(imdbId, userId, rating) {
+export async function fetchAndReviewMovie(imdbId, userId, rating, review = '') {
   const newMovie = await findOrCreateMovie(imdbId)
-  await reviewMovie(userId, newMovie.id, rating, '')
+  await reviewMovie(userId, newMovie.id, rating, review)
 }
 
 export async function updateReview(userId, movieId, rating, review) {
@@ -185,39 +347,6 @@ export async function updateReview(userId, movieId, rating, review) {
 
   if (error) {
     throw new Error('Error updating review: ' + error.message)
-  }
-  return data
-}
-
-export async function searchProfile(username, controller) {
-  if (!username || username.trim().length <= 2) return
-
-  const cleanedUsername = username.trim()
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .ilike('username', `%${cleanedUsername}%`) // case-insensitive search
-    .limit(20)
-    .abortSignal(controller.signal)
-
-  if (error) {
-    throw new Error('Error searching for this profile: ' + error.message)
-  }
-  return data
-}
-
-export async function getProfile(userId) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select(
-      'id, username, avatar_url, bio, full_name, followersCount, followingCount, moviesCount',
-    )
-    .eq('id', userId)
-    .single()
-
-  if (error) {
-    throw new Error('Error fetching profile: ' + error.message)
   }
   return data
 }

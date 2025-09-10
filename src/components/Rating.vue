@@ -9,10 +9,11 @@
       type: String,
       required: true,
     },
+    initialRate: { type: Number, default: 0 },
   })
 
   const auth = useAuthStore()
-  const rate = ref(0)
+  const rate = ref(props.initialRate)
   const hoverRate = ref(0)
 
   const displayRate = computed(() => hoverRate.value || rate.value)

@@ -7,6 +7,8 @@
     value: { type: Number, required: true },
     fill: { type: String, required: true },
     rate: { type: Number, required: true },
+    size: { type: Number, required: false, default: 24 },
+    isMovieView: { type: Boolean, default: false },
   })
   const emit = defineEmits(['setHoverRate', 'setRate'])
   const starWrapper = ref(null)
@@ -61,7 +63,7 @@
   watch(
     () => props.rate,
     (newVal, oldVal) => {
-      if (props.value === 1) {
+      if (!props.isMovieView && props.value === 1) {
         if (newVal > 0 && newVal !== oldVal) {
           collapse()
         } else if (newVal === 0) expand()
@@ -77,13 +79,16 @@
     :class="{ 'transition-star': props.value > 1 }"
   >
     <Star
+      :size="props.size"
       color="#312c85"
       :fill="props.fill"
       @mouseenter="emit('setHoverRate', props.value)"
-      @click.stop="emit('setRate', props.rate === 0 ? props.value : 0)"
+      @click.stop="
+        emit('setRate', props.rate || isMovieView === 0 ? props.value : 0)
+      "
     />
     <span
-      v-if="props.value === 1 && props.rate > 0"
+      v-if="!props.isMovieView && props.value === 1 && props.rate > 0"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white"
     >
       {{ props.rate }}

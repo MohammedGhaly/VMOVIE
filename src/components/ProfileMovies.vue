@@ -41,10 +41,10 @@
       state.topMovies = topmovies
       state.recentMovies = recentmovies
       state.underratedMovies = underratedmovies.filter(
-        (item) => Math.abs(item.rating_diff) > 3,
+        (item) => Math.abs(item.rating_diff) >= 2.5,
       )
       state.overratedMovies = overratedmovies.filter(
-        (item) => Math.abs(item.rating_diff) > 3,
+        (item) => Math.abs(item.rating_diff) >= 2.5,
       )
     } catch (err) {
       console.log(err)

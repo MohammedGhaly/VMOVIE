@@ -2,6 +2,7 @@
   import { Star } from 'lucide-vue-next'
   import { ref } from 'vue'
   import Rating from './Rating.vue'
+  import router from '../router'
 
   const props = defineProps({
     movie: { type: Object, required: true },
@@ -11,7 +12,8 @@
 
 <template>
   <div
-    class="searched-movie-card flex justify-between h-32 xl:h-52 p-2 bg-neutral-900 rounded-2xl gap-6"
+    class="searched-movie-card flex justify-between h-32 xl:h-52 p-2 bg-neutral-900 rounded-2xl gap-6 hover:brightness-105"
+    @click="router.push(`/movie/${props.movie.imdbID}`)"
   >
     <img
       :src="props.movie.Poster"
