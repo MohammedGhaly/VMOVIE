@@ -19,7 +19,7 @@
         props.userId,
         'watched_at',
         false,
-        10,
+        12,
         pageNumber.value,
       )
       movies.value = [...movies.value, ...fetchedMovies]
@@ -35,18 +35,28 @@
 </script>
 
 <template>
+  <template v-if="!isLoading">
+    <div
+      class="px-3 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-4 justify-items-center w-full"
+    >
+      <ProfileMovieItem
+        v-for="movie in movies"
+        :key="movie.id"
+        :movie="movie"
+      />
+    </div>
+    <p
+      class="w-full underline cursor-pointer text-indigo-400 text-lg text-center"
+      @click="fetchNextMoviesPage"
+    >
+      Load more
+    </p>
+  </template>
+
   <div
-    class="px-3 grid grid-cols-1 xl:grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-4 justify-items-center w-full"
+    v-if="isLoading"
+    class="w-full flex-1 flex justify-center items-center p-6"
   >
-    <ProfileMovieItem v-for="movie in movies" :key="movie.id" :movie="movie" />
+    <SyncLoader color="#fff" size="22px" />
   </div>
-  <div v-if="isLoading" class="w-full flex justify-center p-6">
-    <SyncLoader color="#fff" size="10px" />
-  </div>
-  <p
-    class="w-full underline cursor-pointer text-indigo-400 text-lg text-center"
-    @click="fetchNextMoviesPage"
-  >
-    Load more
-  </p>
 </template>

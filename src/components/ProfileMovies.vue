@@ -57,69 +57,80 @@
 <template>
   <template v-if="!state.isLoading">
     <!-- Top rated -->
-    <h2 v-if="state.topMovies.length > 0" class="text-2xl ml-3 font-bold mb-3">
-      Top rated
-    </h2>
-    <div
-      v-if="state.topMovies.length > 0"
-      class="flex gap-2 mx-3 pb-3 overflow-x-auto"
-    >
-      <ProfileMovieItem
-        v-for="movie in state.topMovies"
-        :key="`t${movie.id}`"
-        :movie="movie"
-      />
+    <div>
+      <h2
+        v-if="state.topMovies.length > 0"
+        class="text-2xl ml-3 font-bold mb-3"
+      >
+        Top rated
+      </h2>
+      <div
+        v-if="state.topMovies.length > 0"
+        class="flex gap-2 mx-3 pb-3 overflow-x-auto"
+      >
+        <ProfileMovieItem
+          v-for="movie in state.topMovies"
+          :key="`t${movie.id}`"
+          :movie="movie"
+        />
+      </div>
     </div>
     <!-- Watched recently -->
-    <h2
-      v-if="state.recentMovies.length > 0"
-      class="text-2xl ml-3 font-bold mb-3"
-    >
-      Watched recently
-    </h2>
-    <div
-      v-if="state.recentMovies.length > 0"
-      class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
-    >
-      <ProfileMovieItem
-        v-for="movie in state.recentMovies"
-        :key="`r${movie.id}`"
-        :movie="movie"
-      />
+    <div>
+      <h2
+        v-if="state.recentMovies.length > 0"
+        class="text-2xl ml-3 font-bold mb-3"
+      >
+        Watched recently
+      </h2>
+      <div
+        v-if="state.recentMovies.length > 0"
+        class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
+      >
+        <ProfileMovieItem
+          v-for="movie in state.recentMovies"
+          :key="`r${movie.id}`"
+          :movie="movie"
+        />
+      </div>
     </div>
     <!-- Underrated Movies -->
-    <h2
-      v-if="state.underratedMovies.length > 0"
-      class="text-2xl ml-3 font-bold mb-3"
-    >
-      Underrated Movies
-    </h2>
-    <div
-      v-if="state.underratedMovies.length > 0"
-      class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
-    >
-      <ProfileMovieItem
-        v-for="movie in state.underratedMovies"
-        :key="`r${movie.id}`"
-        :movie="movie"
-      />
+    <div>
+      <h2
+        v-if="state.underratedMovies.length > 0"
+        class="text-2xl ml-3 font-bold mb-3"
+      >
+        Underrated Movies
+      </h2>
+      <div
+        v-if="state.underratedMovies.length > 0"
+        class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
+      >
+        <ProfileMovieItem
+          v-for="movie in state.underratedMovies"
+          :key="`r${movie.id}`"
+          :movie="movie"
+        />
+      </div>
     </div>
     <!-- Overrated Movies -->
-    <h2
-      v-if="state.overratedMovies.length > 0"
-      class="text-2xl ml-3 font-bold mb-3"
-    >
-      Overrated Movies
-    </h2>
-    <div
-      v-if="state.overratedMovies.length > 0"
-      class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
-    >
-      <ProfileMovieItem
-        v-for="movie in state.overratedMovies"
-        :key="`r${movie.id}`"
-        :movie="movie"
-      />
+    <div>
+      <h2
+        v-if="state.overratedMovies.length > 0"
+        class="text-2xl ml-3 font-bold mb-3"
+      >
+        Overrated Movies
+      </h2>
+      <div
+        v-if="state.overratedMovies.length > 0"
+        class="recent-movies flex gap-2 mx-3 pb-3 overflow-x-auto"
+      >
+        <ProfileMovieItem
+          v-for="movie in state.overratedMovies"
+          :key="`r${movie.id}`"
+          :movie="movie"
+        />
+      </div>
     </div>
     <div class="w-fit mx-auto">
       <router-link
@@ -130,7 +141,7 @@
       </router-link>
     </div>
   </template>
-  <div v-else class="w-full flex justify-center items-center h-full">
+  <div v-else class="w-full flex-1 flex justify-center items-center">
     <SyncLoader color="white" size="22px" />
   </div>
 </template>

@@ -15,7 +15,9 @@
         alt="profile picture"
         class="aspect-square"
       />
-      <User v-else size="50" />
+      <div v-else class="bg-neutral-800 p-4">
+        <User size="50" />
+      </div>
     </div>
     <div class="flex-1 space-y-3">
       <p class="font-semibold text-xl">@{{ props.profile.username }}</p>

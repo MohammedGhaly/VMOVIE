@@ -12,7 +12,7 @@
 
 <template>
   <div
-    class="m-8 flex bg-indigo-800 rounded-2xl px-4 justify-between items-center min-h-18 xl:mx-32"
+    class="m-8 mt-4 md:mt-8 flex bg-indigo-800 rounded-2xl px-4 justify-between items-center min-h-18 xl:mx-32"
   >
     <div
       v-if="!state.isSearching"
@@ -36,7 +36,7 @@
     </div>
     <div
       v-else
-      class="w-full h-full flex gap-1 bg-neutral-900 rounded-lg overflow-hidden pr-3"
+      class="w-full flex gap-1 bg-neutral-900 rounded-lg overflow-hidden pr-3"
     >
       <input
         ref="searchInputRef"

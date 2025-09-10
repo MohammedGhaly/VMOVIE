@@ -60,5 +60,7 @@
       @set-rate="setRate"
     />
   </div>
-  <span v-if="rate === 0">{{ displayRate }}</span>
+  <span v-if="rate === 0" class="hidden xl:inline-block">{{
+    displayRate
+  }}</span>
 </template>

@@ -5,7 +5,7 @@
 
 <template>
   <div
-    class="flex w-full gap-3 p-2 xl:w-3/5 xl:mx-auto *:w-full *:rounded-lg font-semibold text-xl *:py-2 *:transition-all *:duration-200 *:hover:brightness-105"
+    class="flex w-full gap-3 py-2 px-3 md:w-3/5 md:mx-auto *:w-full *:rounded-lg font-semibold text-xl *:py-2 *:transition-all *:duration-200 *:hover:brightness-105"
   >
     <button
       :class="{

@@ -18,7 +18,13 @@
         class="rounded-lg max-h-52 w-auto xl:w-34"
       />
       <h1
-        class="text-white text-xl text-center font-bold flex-1 flex items-center"
+        class="text-white text-center font-bold flex-1 flex items-center"
+        :class="{
+          'text-lg': props.movie.title.length <= 22,
+          'text-base':
+            props.movie.title.length > 22 && props.movie.title.length <= 30,
+          'text-sm': props.movie.title.length > 30,
+        }"
       >
         {{ props.movie.title }}
       </h1>

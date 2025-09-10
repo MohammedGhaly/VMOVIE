@@ -17,9 +17,12 @@
 </script>
 
 <template>
-  <div class="space-y-3">
-    <NavBar />
-    <SearchList v-if="searchStore.state.isSearching" />
-    <RouterView v-else />
+  <div class="space-y-3 pb-4 flex flex-col h-screen">
+    <NavBar class="shrink-0" />
+    <SearchList
+      v-if="searchStore.state.isSearching"
+      class="flex-1 overflow-auto"
+    />
+    <RouterView v-else class="flex-1 overflow-auto xl:w-4/5 xl:mx-auto" />
   </div>
 </template>

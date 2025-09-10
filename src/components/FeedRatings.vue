@@ -25,7 +25,7 @@
     </div>
     <div
       v-if="props.imdbrating"
-      class="p-2 flex items-center gap-3 rounded-lg"
+      class="p-2 flex items-center gap-3 justify-center rounded-lg"
       :class="{
         'bg-green-700/30': props.imdbrating >= '7.5/10',
         'bg-yellow-700/20':
@@ -34,11 +34,11 @@
       }"
     >
       <img class="w-8 h-8" :src="imdbLogo" alt="imdb" />
-      {{ props.imdbrating }}
+      {{ props.imdbrating.replace('/10', '') }}
     </div>
     <div
       v-if="props.rottentomatoesrating"
-      class="p-2 flex items-center gap-3 rounded-lg"
+      class="p-2 flex items-center gap-3 justify-center rounded-lg"
       :class="{
         'bg-green-700/30': props.rottentomatoesrating >= '85%',
         'bg-yellow-700/20':
@@ -52,7 +52,7 @@
     </div>
     <div
       v-if="props.metacriticrating"
-      class="p-2 flex items-center gap-3 rounded-lg"
+      class="p-2 flex items-center gap-3 justify-center rounded-lg"
       :class="{
         'bg-green-700/30': props.metacriticrating >= '75/100',
         'bg-yellow-700/20':

@@ -16,7 +16,7 @@
 <template>
   <button
     class="btn bg-neutral-200 p-2 font-semibold justify-center text-gray-950 flex gap-4 items-center hover:bg-neutral-300 text-lg rounded-lg xl:w-4/5 xl:mx-auto"
-    @click="handleSignInWithGoogle"
+    @click.prevent="handleSignInWithGoogle"
   >
     <img
       v-if="!isLoading"

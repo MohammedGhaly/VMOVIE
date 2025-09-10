@@ -51,7 +51,9 @@
   <p v-if="error" class="text-4xl w-full text-center font-semibold">
     {{ error }} 🚫
   </p>
-  <div class="movies-list flex flex-col gap-2 xl:mx-32 xl:grid xl:grid-cols-2">
+  <div
+    class="movies-list flex flex-col gap-2 xl:mx-32 md:grid md:grid-cols-2 pb-4 px-3"
+  >
     <SearchedMovie
       v-for="movie in moviesList"
       :key="movie.imdbID"

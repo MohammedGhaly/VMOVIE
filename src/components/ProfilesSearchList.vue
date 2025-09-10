@@ -49,7 +49,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 w-full xl:w-3/5 xl:mx-auto">
+  <div class="flex flex-col gap-2 w-full px-3 md:w-4/5 xl:w-3/5 md:mx-auto">
     <SyncLoader
       v-if="isLoading"
       color="#fff"

@@ -16,7 +16,9 @@
 <template>
   <div v-if="!isLoading" class="flex flex-col justify-start gap-8">
     <ProfileHeader :profile="profile" />
-    <div class="space-y-4 bg-neutral-900 rounded-lg pb-3">
+    <div
+      class="flex flex-col justify-start gap-4 bg-neutral-900 rounded-lg pb-3 flex-1"
+    >
       <profile-tabs
         :active-tab="activeTab"
         @set-profile-tab="(val) => (activeTab = val)"

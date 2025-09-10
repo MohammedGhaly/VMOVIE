@@ -23,11 +23,10 @@ export async function getNewReleases() {
     Date.now() - new Date(data.updated_at).getTime() < 24 * 60 * 60 * 1000
   ) {
     console.log('fresh data')
-    return data.movies // already cached
+    return data.movies
   }
   console.log('old data, fetching from tmdb and omdb')
-  // const movies = await getNewReleasesFromTOMDB()
-  const movies = getNewReleasesFromTOMDB()
+  const movies = await getNewReleasesFromTOMDB()
   console.log('fresh data => ', movies)
   await supabase
     .from('cached_movies')
@@ -37,7 +36,7 @@ export async function getNewReleases() {
     })
     .eq('id', 'new_releases')
 
-  return data
+  return movies
 }
 
 export async function getFriendsRecentReviews(userId) {
