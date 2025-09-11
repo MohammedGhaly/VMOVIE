@@ -71,7 +71,7 @@
         />
       </div>
       <div v-else class="h-[30vh] md:h-[70vh] flex items-center justify-center">
-        <p class="text-center font-semibold text-3xl">
+        <p class="p-10 text-center font-semibold text-2xl">
           your reviews feed is currently empty
         </p>
       </div>
