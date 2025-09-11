@@ -25,9 +25,8 @@
         getFriendsRecentReviews(auth.user.id),
         getNewReleases(),
       ])
-      followingReviews.value = fetchedFollowingReviews
       newReleases.value = fetchedNewReleases
-      console.log(fetchedNewReleases)
+      followingReviews.value = fetchedFollowingReviews
     } catch (err) {
       toast.error('an unexpected error has occured')
       error.value = 'an unexpected error has occured, try again later'
@@ -61,12 +60,20 @@
       <h1 class="mx-2 font-bold text-2xl lg:text-3xl text-white mb-2 lg:mb-4">
         Feed
       </h1>
-      <div class="flex flex-col gap-2 lg:gap-3">
+      <div
+        v-if="followingReviews && followingReviews.length"
+        class="flex flex-col gap-2 lg:gap-3"
+      >
         <FeedCard
           v-for="item in followingReviews"
           :key="item.id"
           :review="item"
         />
+      </div>
+      <div v-else class="h-[30vh] md:h-[70vh] flex items-center justify-center">
+        <p class="text-center font-semibold text-3xl">
+          your reviews feed is currently empty
+        </p>
       </div>
     </div>
   </div>
