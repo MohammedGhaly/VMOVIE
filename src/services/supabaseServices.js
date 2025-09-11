@@ -217,7 +217,6 @@ export async function getUserOverratedMovies(userId, limit) {
     p_user_id: userId,
     p_limit: limit,
   })
-  console.log('overrated=>', data)
   if (error) {
     throw new Error('Error getting user underrated movies ' + error.message)
   }

@@ -37,7 +37,7 @@
         <button
           v-if="!beingRated"
           class="bg-indigo-700/40 ml-auto mr-3 text-white py-2 px-4 rounded-lg w-fit text-lg hover:brightness-90 flex justify-center gap-2 transition-all duration-200"
-          @click="beingRated = true"
+          @click.stop="beingRated = true"
         >
           <Star stroke-width="3px" color="white" />
           Rate
