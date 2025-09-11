@@ -25,7 +25,6 @@
   onMounted(async () => {
     try {
       isLoading.value = true
-      console.log(auth.user.id)
       let fetchedMovie = await getUserMovieByImdbId(auth.user.id, imdbid)
       if (!fetchedMovie) {
         fetchedMovie = await omdbFetchMovieById(imdbid)
@@ -114,7 +113,6 @@
             :initial-review="movie.review"
             @set-personalrating="
               (val) => {
-                console.log('value from Movie view', val)
                 movie.personalrating = val
               }
             "

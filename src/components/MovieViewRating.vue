@@ -59,7 +59,6 @@
       toast.error("don't forget to add a rating")
       return
     }
-    console.log(review.value)
     await fetchAndReviewMovie(
       props.imdbId,
       auth.user.id,

@@ -32,22 +32,28 @@
     >
       <img class="w-24 h-24" src="/logo.png" alt="VMOVIE Logo" />
       <form class="flex flex-col gap-y-4 w-full" @submit.prevent="handleLogin">
-        <label for="email" class="text-lg font-medium ml-1">Email</label>
-        <input
-          v-model="email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          class="bg-neutral-700 p-2 px-3 text-lg rounded-lg"
-        />
-        <label for="password" class="text-lg font-medium ml-1">Password</label>
-        <input
-          v-model="password"
-          name="password"
-          type="password"
-          placeholder="Password"
-          class="bg-neutral-700 p-2 px-3 text-lg rounded-lg"
-        />
+        <div class="flex flex-col w-full gap-1">
+          <label for="email" class="text-lg font-medium ml-1">Email</label>
+          <input
+            v-model="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            class="bg-neutral-700 p-2 px-3 text-lg rounded-lg"
+          />
+        </div>
+        <div class="flex flex-col w-full gap-1">
+          <label for="password" class="text-lg font-medium ml-1">
+            Password
+          </label>
+          <input
+            v-model="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            class="bg-neutral-700 p-2 px-3 text-lg rounded-lg"
+          />
+        </div>
         <AuthSubmitButton :is-loading="isLoading" text="Login" />
         <GoogleLoginButton />
         <p v-if="errorMessage">{{ errorMessage }}</p>
