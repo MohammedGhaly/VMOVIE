@@ -14,6 +14,8 @@
     initialRate: { type: Number, default: 0 },
     initialReview: { type: String, default: '' },
   })
+  const emit = defineEmits(['setPersonalrating'])
+
   const rate = ref(props.initialRate)
   const hoverRate = ref(0)
   const review = ref(props.initialReview)
@@ -34,6 +36,7 @@
     try {
       if (auth.user) {
         await fetchAndReviewMovie(props.imdbId, auth.user.id, val, review.value)
+        emit('setPersonalrating', val)
       } else {
         console.error('User not logged in. Cannot rate movie.')
       }

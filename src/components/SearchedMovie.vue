@@ -24,7 +24,7 @@
     <img
       :src="props.movie.Poster"
       :alt="`${props.movie.Title}`"
-      class="rounded-lg h-full max-w-20 md:w-34"
+      class="rounded-lg h-full w-20 md:w-34"
     />
     <div class="flex-1 flex flex-col h-full justify-between py-2">
       <div class="flex flex-col">

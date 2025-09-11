@@ -25,12 +25,14 @@
   onMounted(async () => {
     try {
       isLoading.value = true
+      console.log(auth.user.id)
       let fetchedMovie = await getUserMovieByImdbId(auth.user.id, imdbid)
       if (!fetchedMovie) {
         fetchedMovie = await omdbFetchMovieById(imdbid)
       }
       movie.value = fetchedMovie
-    } catch {
+    } catch (err) {
+      console.log(err.message)
       toast.error("coulnd't fetch this movie, try again later")
     } finally {
       isLoading.value = false
@@ -47,7 +49,7 @@
     <template v-else>
       <div class="flex flex-col items-center gap-3 xl:w-[45%]">
         <div class="relative">
-          <div class="absolute top-1 left-1 z-10">
+          <div v-if="movie.personalrating" class="absolute top-1 left-1 z-10">
             <Star fill="#312c85" class="size-16 md:size-18" color="#312c85" />
             <span
               class="absolute font-bold top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] text-2xl"
@@ -110,6 +112,12 @@
             :imdb-id="imdbid"
             :initial-rate="movie.personalrating"
             :initial-review="movie.review"
+            @set-personalrating="
+              (val) => {
+                console.log('value from Movie view', val)
+                movie.personalrating = val
+              }
+            "
           />
         </div>
       </div>

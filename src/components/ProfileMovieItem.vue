@@ -8,6 +8,11 @@
 <template>
   <div
     class="relative flex-shrink-0 w-[180px] md:w-[230px]"
+    :class="
+      Boolean(movie.review)
+        ? 'w-[250px] md:w-[300px]'
+        : 'w-[180px] md:w-[230px]'
+    "
     @click="router.push(`/movie/${props.movie.imdbid}`)"
   >
     <div class="absolute top-1 left-1 z-10">

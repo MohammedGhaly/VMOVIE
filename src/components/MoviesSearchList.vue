@@ -1,6 +1,7 @@
 <script setup>
   import { inject, ref, watch } from 'vue'
   import SearchedMovie from './SearchedMovie.vue'
+  import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
   import { omdbFetchMoviesByName } from '../services/omdbAPI'
 
   const moviesList = ref([])
@@ -48,10 +49,17 @@
 </script>
 
 <template>
-  <p v-if="error" class="text-4xl w-full text-center font-semibold">
-    {{ error }} 🚫
-  </p>
   <div
+    v-if="isLoading || error"
+    class="flex items-center justify-center min-h-[60vh]"
+  >
+    <SyncLoader v-if="isLoading" size="22px" color="#fff" />
+    <p v-else-if="error" class="text-4xl w-full text-center font-semibold">
+      {{ error }} 🚫
+    </p>
+  </div>
+  <div
+    v-else
     class="movies-list flex flex-col gap-2 xl:mx-32 md:grid md:grid-cols-2 pb-4 px-3"
   >
     <SearchedMovie

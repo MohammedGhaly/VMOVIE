@@ -27,6 +27,7 @@
       ])
       followingReviews.value = fetchedFollowingReviews
       newReleases.value = fetchedNewReleases
+      console.log(fetchedNewReleases)
     } catch (err) {
       toast.error('an unexpected error has occured')
       error.value = 'an unexpected error has occured, try again later'

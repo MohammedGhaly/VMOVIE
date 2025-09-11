@@ -99,7 +99,7 @@
       >
         <ProfileMovieItem
           v-for="movie in state.underratedMovies"
-          :key="`r${movie.id}`"
+          :key="`u${movie.id}`"
           :movie="movie"
         />
       </div>
@@ -118,7 +118,7 @@
       >
         <ProfileMovieItem
           v-for="movie in state.overratedMovies"
-          :key="`r${movie.id}`"
+          :key="`o${movie.id}`"
           :movie="movie"
         />
       </div>
