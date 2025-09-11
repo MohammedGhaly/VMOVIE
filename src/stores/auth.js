@@ -8,11 +8,15 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     session: null,
+    isInitialized: false,
   }),
   actions: {
     async initAuth() {
+      if (this.isInitialized) return
+
       if (window.location.pathname === '/auth/callback') {
         await this.handleOAuthCallback()
+        this.isInitialized = true
         return
       }
 
@@ -21,11 +25,12 @@ export const useAuthStore = defineStore('auth', {
       this.user = data.session?.user ?? null
 
       // listen for changes
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange((event, session) => {
         this.session = session
         this.user = session?.user ?? null
-        if (session?.user) router.push('/')
+        if (event === 'SIGNED_IN') router.push('/')
       })
+      this.isInitialized = true
     },
 
     async handleOAuthCallback() {

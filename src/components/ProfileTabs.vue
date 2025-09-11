@@ -1,5 +1,8 @@
 <script setup>
-  const props = defineProps({ activeTab: { type: String, default: 'movies' } })
+  const props = defineProps({
+    activeTab: { type: String, default: 'movies' },
+    isMyProfile: { type: Boolean, default: true },
+  })
   defineEmits(['setProfileTab'])
 </script>
 
@@ -24,15 +27,6 @@
       @click="$emit('setProfileTab', 'all')"
     >
       All Movies
-    </button>
-    <button
-      :class="{
-        'bg-neutral-700': props.activeTab === 'settings',
-        'bg-neutral-800': props.activeTab !== 'settings',
-      }"
-      @click="$emit('setProfileTab', 'settings')"
-    >
-      Settings
     </button>
   </div>
 </template>

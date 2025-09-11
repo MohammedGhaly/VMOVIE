@@ -8,18 +8,9 @@
   } from '../services/supabaseServices'
   import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 
-  //   import data from '../data/movies.json'
-  import { RouterLink } from 'vue-router'
-
   const props = defineProps({ userId: { type: String, required: true } })
+  const emit = defineEmits(['viewAll'])
 
-  //   const state = reactive({
-  //     topMovies: data.topMovies,
-  //     recentMovies: data.recentMovies,
-  //     underratedMovies: data.recentMovies,
-  //     overratedMovies: data.recentMovies,
-  //     isLoading: false,
-  //   })
   const state = reactive({
     topMovies: [],
     recentMovies: [],
@@ -133,12 +124,12 @@
       </div>
     </div>
     <div class="w-fit mx-auto">
-      <router-link
-        class="text-indigo-500 underline text-lg text-center mx-auto"
-        :to="`/allMovies/${userId}`"
+      <p
+        class="text-indigo-500 underline text-lg text-center mx-auto cursor-pointer"
+        @click="emit('viewAll')"
       >
         View all movies
-      </router-link>
+      </p>
     </div>
   </template>
   <div v-else class="w-full flex-1 flex justify-center items-center">

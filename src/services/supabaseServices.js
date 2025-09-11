@@ -22,12 +22,9 @@ export async function getNewReleases() {
     data &&
     Date.now() - new Date(data.updated_at).getTime() < 24 * 60 * 60 * 1000
   ) {
-    console.log('fresh data')
     return data.movies
   }
-  console.log('old data, fetching from tmdb and omdb')
   const movies = await getNewReleasesFromTOMDB()
-  console.log('fresh data => ', movies)
   await supabase
     .from('cached_movies')
     .update({
@@ -255,8 +252,6 @@ export async function findOrCreateMovie(imdbId) {
     .from('movies')
     .select('*')
     .eq('imdbid', imdbId)
-
-  // .single()
 
   if (movies.length) {
     return movies[0]

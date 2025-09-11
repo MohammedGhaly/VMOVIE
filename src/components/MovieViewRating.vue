@@ -17,12 +17,11 @@
   const rate = ref(props.initialRate)
   const hoverRate = ref(0)
   const review = ref(props.initialReview)
-  const submittedReview = ref('')
-
-  const toast = useToast()
+  const submittedReview = ref(props.initialReview)
 
   const displayRate = computed(() => hoverRate.value || rate.value)
 
+  const toast = useToast()
   const auth = useAuthStore()
 
   const getFill = (val) => {
@@ -30,7 +29,7 @@
   }
 
   const setRate = async (val) => {
-    if (rate.value === val) return
+    if (rate.value === val || val === 0) return
     rate.value = val
     try {
       if (auth.user) {
@@ -51,16 +50,19 @@
     hoverRate.value = 0
   }
 
-  // const handleRerate = () => {
-  //   if (rate.value > 0) setRate(0)
-  // }
-
-  const submitReview = (value) => {
+  const submitReview = async () => {
+    submittedReview.value = review.value
     if (rate.value === 0) {
-      toast.error('please add a rating before adding a review')
+      toast.error("don't forget to add a rating")
       return
     }
-    submittedReview.value = value
+    console.log(review.value)
+    await fetchAndReviewMovie(
+      props.imdbId,
+      auth.user.id,
+      rate.value,
+      review.value,
+    )
   }
 
   const editReviewClicked = () => {

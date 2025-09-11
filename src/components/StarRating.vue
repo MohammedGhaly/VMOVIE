@@ -83,10 +83,11 @@
       color="#312c85"
       :fill="props.fill"
       @mouseenter="emit('setHoverRate', props.value)"
-      @click.stop="
-        emit('setRate', props.rate || isMovieView === 0 ? props.value : 0)
-      "
+      @click.stop="emit('setRate', props.value)"
     />
+    <!-- @click.stop="
+        emit('setRate', props.rate || isMovieView === 0 ? props.value : 0)
+      " -->
     <span
       v-if="!props.isMovieView && props.value === 1 && props.rate > 0"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white"

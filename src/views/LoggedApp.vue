@@ -23,6 +23,15 @@
       v-if="searchStore.state.isSearching"
       class="flex-1 overflow-auto"
     />
-    <RouterView v-else class="flex-1 overflow-auto xl:w-4/5 xl:mx-auto" />
+    <RouterView
+      v-else
+      class="flex-1 router-view overflow-y-auto xl:w-4/5 xl:mx-auto"
+    />
   </div>
 </template>
+
+<style scoped>
+  .router-view::-webkit-scrollbar {
+    width: 0px;
+  }
+</style>

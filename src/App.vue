@@ -4,7 +4,6 @@
   import LoggedApp from './views/LoggedApp.vue'
 
   const auth = useAuthStore()
-  auth.initAuth()
 </script>
 
 <template>

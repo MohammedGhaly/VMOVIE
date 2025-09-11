@@ -11,6 +11,7 @@
   import { useAuthStore } from '../stores/auth'
   import { useToast } from 'vue-toastification'
   import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
+  import { Star } from 'lucide-vue-next'
 
   const movie = ref({})
   const isLoading = ref(false)
@@ -39,17 +40,27 @@
 
 <template>
   <div
-    class="w-full h-full flex flex-col lg:flex-row gap-8 pb-10 min-h-[70vh]"
-    :class="{ 'justify-center': isLoading }"
+    class="movie-view w-full h-full flex flex-col lg:flex-row gap-8 pb-10 min-h-[70vh]"
+    :class="{ 'justify-center items-center': isLoading }"
   >
     <sync-loader v-if="isLoading" size="24px" color="white" class="mx-auto" />
     <template v-else>
-      <div class="flex flex-col items-center gap-3">
-        <img
-          class="w-60 rounded-xl"
-          :src="movie.posterurl"
-          :alt="`{{ movie.title }}_poster`"
-        />
+      <div class="flex flex-col items-center gap-3 xl:w-[45%]">
+        <div class="relative">
+          <div class="absolute top-1 left-1 z-10">
+            <Star fill="#312c85" class="size-16 md:size-18" color="#312c85" />
+            <span
+              class="absolute font-bold top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] text-2xl"
+            >
+              {{ movie.personalrating }}
+            </span>
+          </div>
+          <img
+            class="w-60 rounded-xl xl:w-72"
+            :src="movie.posterurl"
+            :alt="`{{ movie.title }}_poster`"
+          />
+        </div>
         <h2 class="font-semibold text-4xl text-center text-white">
           {{ movie.title }}
         </h2>
@@ -59,7 +70,7 @@
         <div
           class="flex justify-start gap-4 *:font-semibold *:bg-neutral-800 *:rounded-lg *:p-2"
         >
-          <span class="text-2xl">{{ movie.year }}</span>
+          <span class="text-2xl flex items-center">{{ movie.year }}</span>
           <span class="text-xl">{{ movie.country }}</span>
         </div>
         <!-- plot -->
@@ -96,7 +107,7 @@
         </div>
         <div class="flex w-full justify-center mt-10">
           <MovieViewRating
-            :imdb-id="movie.imdbid"
+            :imdb-id="imdbid"
             :initial-rate="movie.personalrating"
             :initial-review="movie.review"
           />

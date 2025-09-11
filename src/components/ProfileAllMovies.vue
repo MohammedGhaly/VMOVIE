@@ -5,10 +5,15 @@
   import { useToast } from 'vue-toastification'
   import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 
-  const props = defineProps({ userId: { type: String, required: true } })
+  const ITEMS_PER_PAGE = 12
+
+  const props = defineProps({
+    userId: { type: String, required: true },
+    moviesCount: { type: Number, default: 100 },
+  })
   const movies = ref([])
   const isLoading = ref(false)
-  const pageNumber = ref(1)
+  const pageNumber = ref(0)
 
   const toast = useToast()
 
@@ -19,8 +24,8 @@
         props.userId,
         'watched_at',
         false,
-        12,
-        pageNumber.value,
+        ITEMS_PER_PAGE,
+        pageNumber.value + 1,
       )
       movies.value = [...movies.value, ...fetchedMovies]
       pageNumber.value = pageNumber.value + 1
@@ -46,6 +51,7 @@
       />
     </div>
     <p
+      v-if="pageNumber * ITEMS_PER_PAGE < props.moviesCount"
       class="w-full underline cursor-pointer text-indigo-400 text-lg text-center"
       @click="fetchNextMoviesPage"
     >

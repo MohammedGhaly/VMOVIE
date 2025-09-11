@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <img src="/whiteLogo.png" alt="VMOVIE Logo" class="w-14 h-14" />
+  <img src="/whiteLogo.png" alt="VMOVIE Logo" class="size-12 md:size-14" />
 </template>

@@ -3,6 +3,7 @@ import { getProfile } from '../services/supabaseServices'
 
 export const createProfileStore = () => {
   const profile = ref({})
+  const error = ref(null)
   const isLoading = ref(false)
 
   const fetchProfile = async (id) => {
@@ -11,11 +12,12 @@ export const createProfileStore = () => {
       const data = await getProfile(id)
       profile.value = data
     } catch (err) {
+      error.value = err.message
       console.log(err.message)
     } finally {
       isLoading.value = false
     }
   }
 
-  return { profile, fetchProfile, isLoading }
+  return { profile, fetchProfile, isLoading, error }
 }

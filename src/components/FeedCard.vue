@@ -15,7 +15,7 @@
     <!-- profile -->
     <div class="flex items-center gap-2 lg:gap-5">
       <img
-        class="rounded-full aspect-square h-16 lg:h-20 cursor-pointer"
+        class="rounded-full aspect-square h-12 lg:h-16 cursor-pointer"
         :src="props.review.avatar_url"
         :alt="`${props.review.username} profile`"
         @click="router.push(`/profile/${props.review.user_id}`)"
