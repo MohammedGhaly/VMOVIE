@@ -7,6 +7,7 @@
 
   const auth = useAuthStore()
   const { profile } = inject('profileStore')
+  console.log(profile.avatar_url)
   const { state, setIsSearching, setProfiles } = inject('searchStore')
   const searchInputRef = ref(null)
 </script>
@@ -29,11 +30,11 @@
         </button>
         <button class="" @click="router.push('/me')">
           <User
-            v-if="!(auth.user.user_metadata.avatar_url || profile.avatar_url)"
+            v-if="!(profile.avatar_url || auth.user.user_metadata.avatar_url)"
           />
           <div v-else class="w-8 h-8 rounded-full overflow-hidden">
             <img
-              :src="auth.user.user_metadata.avatar_url || profile.avatar_url"
+              :src="profile.avatar_url || auth.user.user_metadata.avatar_url"
               alt="user avatar"
             />
           </div>
