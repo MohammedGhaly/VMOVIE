@@ -4,7 +4,7 @@ export const API_KEY = import.meta.env.VITE_OMDB_API_KEY
 
 async function omdbFetchMoviesByName(query, controller) {
   const res = await fetch(
-    `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+    `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
     { signal: controller.signal },
   )
   if (!res.ok) {
@@ -17,7 +17,7 @@ async function omdbFetchMoviesByName(query, controller) {
 
 async function omdbFetchMovieById(imdbId) {
   const res = await fetch(
-    `http://www.omdbapi.com/?i=${imdbId}&apikey=${API_KEY}`,
+    `https://www.omdbapi.com/?i=${imdbId}&apikey=${API_KEY}`,
   )
   const omdbData = await res.json()
 
