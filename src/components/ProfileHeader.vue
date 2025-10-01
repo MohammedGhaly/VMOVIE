@@ -2,11 +2,13 @@
   import { ref } from 'vue'
   import { User } from 'lucide-vue-next'
   import UpdateProfilePictureModal from './UpdateProfilePictureModal.vue'
+  import { useAuthStore } from '../stores/auth'
 
   const props = defineProps({ profile: { type: Object, required: true } })
   const emit = defineEmits(['update:profile'])
 
   const showPicModal = ref(false)
+  const auth = useAuthStore()
 
   const handleProfileUpdate = (updatedProfile) => {
     emit('update:profile', updatedProfile)
@@ -53,7 +55,7 @@
   </div>
 
   <UpdateProfilePictureModal
-    v-if="showPicModal"
+    v-if="auth.user.id === props.profile.id && showPicModal"
     @close-pic-modal="showPicModal = false"
     @update:profile="handleProfileUpdate"
   />

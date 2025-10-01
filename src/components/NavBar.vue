@@ -7,7 +7,6 @@
 
   const auth = useAuthStore()
   const { profile } = inject('profileStore')
-  console.log(profile.avatar_url)
   const { state, setIsSearching, setProfiles } = inject('searchStore')
   const searchInputRef = ref(null)
 </script>

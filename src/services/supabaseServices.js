@@ -47,8 +47,14 @@ export async function getFriendsRecentReviews(userId) {
   if (!following || following.length === 0) return []
 
   const followingIds = following.map((f) => f.following_id)
+  let data = await getFriendsRecentReviewsByDays(followingIds)
+  if (data.length >= 10) return mapFeedReviewObject(data)
+  data = await getFriendsRecentReviewsByLimit(followingIds)
+  return mapFeedReviewObject(data)
+}
 
-  // 2. Get reviews from those users in the past 7 days
+async function getFriendsRecentReviewsByDays(followingIds) {
+  // 2. Get reviews from those users in the past 14 days
   const { data, error } = await supabase
     .from('user_movies')
     .select(
@@ -78,13 +84,48 @@ export async function getFriendsRecentReviews(userId) {
     .in('user_id', followingIds)
     .gte(
       'watched_at',
-      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
     )
     .order('watched_at', { ascending: false })
 
   if (error) throw error
+  return data
+}
 
-  return mapFeedReviewObject(data)
+async function getFriendsRecentReviewsByLimit(followingIds) {
+  // 2. Get the last 15 reviews from friends
+  const { data, error } = await supabase
+    .from('user_movies')
+    .select(
+      `
+      id,
+      user_id,
+      personalrating,
+      review,
+      watched_at,
+      movies (
+        id,
+        imdbid,
+        title,
+        year,
+        imdbrating,
+        rottentomatoesrating,
+        metacriticrating,
+        plot,
+        posterurl
+      ),
+      profiles (
+        username,
+        avatar_url
+      )
+    `,
+    )
+    .in('user_id', followingIds)
+    .order('watched_at', { ascending: false })
+    .limit(15)
+
+  if (error) throw error
+  return data
 }
 
 // user movies fetching //

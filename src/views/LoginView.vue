@@ -1,16 +1,19 @@
 <script setup>
-  import { ref } from 'vue'
+  import { onBeforeMount, ref } from 'vue'
   import { signIn } from '../services/supabaseServices'
   import router from '../router'
   import GoogleLoginButton from '../components/GoogleLoginButton.vue'
   import { RouterLink } from 'vue-router'
   import AuthSubmitButton from '../components/AuthSubmitButton.vue'
+  import { useAuthStore } from '../stores/auth'
 
   const email = ref('')
   const password = ref('')
   const errorMessage = ref('')
   const isLoading = ref(false)
 
+  const auth = useAuthStore()
+  
   async function handleLogin() {
     isLoading.value = true
     const { error } = await signIn(email.value, password.value)
@@ -21,6 +24,11 @@
       router.push('/')
     }
   }
+
+  onBeforeMount(()=>{
+    if (auth.user) router.replace('/')
+  })
+  
 </script>
 
 <template>
