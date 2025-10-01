@@ -6,22 +6,27 @@
   import { RouterLink } from 'vue-router'
   import AuthSubmitButton from '../components/AuthSubmitButton.vue'
   import { useAuthStore } from '../stores/auth'
+import { useToast } from 'vue-toastification'
 
   const email = ref('')
   const password = ref('')
   const errorMessage = ref('')
   const isLoading = ref(false)
+  const toast = useToast()
 
   const auth = useAuthStore()
   
   async function handleLogin() {
-    isLoading.value = true
-    const { error } = await signIn(email.value, password.value)
-    if (error) {
-      errorMessage.value = error.message
-    } else {
+    try {
+
+      isLoading.value = true
+      await signIn(email.value, password.value)
       errorMessage.value = ''
       router.push('/')
+    } catch(error){
+        errorMessage.value = error.message
+        isLoading.value = false
+        toast.error(errorMessage.value)
     }
   }
 
@@ -64,7 +69,6 @@
         </div>
         <AuthSubmitButton :is-loading="isLoading" text="Login" />
         <GoogleLoginButton />
-        <p v-if="errorMessage">{{ errorMessage }}</p>
         <RouterLink to="/signup" class="underline text-sm text-center">
           Don't have an account? Register
         </RouterLink>
