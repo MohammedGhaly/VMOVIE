@@ -27,6 +27,7 @@
       router.push('/')
     } catch (error) {
       toast.error(error.message)
+      isLoading.value = false
       return
     }
   }
